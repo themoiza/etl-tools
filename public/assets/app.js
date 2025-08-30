@@ -3,10 +3,10 @@ const { createApp, ref } = Vue
 createApp({
     data() {
         return {
-            page: 'home',
-            message: 'ETL Tools!',
+            page: 'relationship-analyser',
             columns: '',
-            schemas: ''
+            schemas: '',
+            raResponse: ''
         }
     },
     mounted() {
@@ -34,6 +34,25 @@ createApp({
             .catch(err => {
                 this.response = 'Erro ao enviar: ' + err;
             });
+        },
+        relationshipAnalyser(){
+
+            const formData = new FormData();
+            formData.append('ra_table', this.columns);
+            formData.append('ra_columns', this.schemas);
+
+            fetch('/relationship-analyser', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                this.raResponse = data.result;
+            })
+            .catch(err => {
+                this.raResponse = 'Error: ' + err;
+            });
+
         }
     }
 }).mount('#app')

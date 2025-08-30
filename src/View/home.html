@@ -12,52 +12,107 @@
         <div id="app" class="text-white">
 
         <aside id="cta-button-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
+            
+            <h1 class="ms-3 py-4">ETL Tools - PostgreSQL Mission</h1>
             <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
                 <ul class="space-y-2 font-medium">
-                <li>
-                    <h1 class="ms-3">ETL TOOLS</h1>
-                </li>
-                <li>
-                    <button @click="openPage('home')" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group w-full">
-                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                        </svg>
-                        <span class="flex-1 ms-3 whitespace-nowrap">Home</span>
-                    </button>
-                </li>
-                <li>
-                    <button @click="openPage('search')" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group w-full">
-                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                        </svg>
-                        <span class="flex-1 ms-3 whitespace-nowrap">Encontrar Colunas</span>
-                    </button>
-                </li>
+                    <li>
+                        <button @click="openPage('home')" class="p-2 text-left text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group w-full">
+                            <span class="flex-1 ms-3">Home</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button @click="openPage('search')" class="p-2 text-left text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group w-full">
+                            <span class="flex-1 ms-3">Find columns</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button @click="openPage('new-connection')" class="p-2 text-left text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group w-full">
+                            <span class="flex-1 ms-3">New connection</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button @click="openPage('relationship-analyser')" class="p-2 text-left text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group w-full">
+                            <span class="flex-1 ms-3">Relationship Analyser</span>
+                        </button>
+                    </li>
                 </ul>
             </div>
         </aside>
 
         <div class="p-4 sm:ml-64">
-            <div v-if="page=='home'">{{ message }}</div>
+            <div v-if="page=='home'"></div>
             <div v-if="page=='search'">
-            <h2>Procurar colunas</h2>
-            <form class="max-w-sm w-full" @submit.prevent="submitForm">
-                <label for="email-address-icon" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Colunas</label>
-                <div class="relative">
-                    <input v-model="columns" type="text" class="bg-gray-50 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="">
-                </div>
-                <label for="email-address-icon" class="block mb-2 mt-2 text-sm font-medium text-gray-900 dark:text-white">Schemas</label>
-                <div class="relative">
-                    <input v-model="schemas" type="text" class="bg-gray-50 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="">
-                </div>
-                <div class="py-4 w-full">
-                    <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                        BUSCAR
-                    </button>
-                </div>
-            </form>
+                <h2>Procurar colunas</h2>
+                <form class="max-w-sm w-full" @submit.prevent="submitForm">
+                    <label for="email-address-icon" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Colunas</label>
+                    <div class="relative">
+                        <input v-model="columns" type="text" class="bg-gray-50 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="">
+                    </div>
+                    <label for="email-address-icon" class="block mb-2 mt-2 text-sm font-medium text-gray-900 dark:text-white">Schemas</label>
+                    <div class="relative">
+                        <input v-model="schemas" type="text" class="bg-gray-50 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="">
+                    </div>
+                    <div class="py-4 w-full">
+                        <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                            BUSCAR
+                        </button>
+                    </div>
+                </form>
             </div>
-        </div>
+            <div v-if="page=='new-connection'">
+                <h2 class="text-lg">New connection</h2>
+                <div class="py-4">
+                    <form class="max-w-sm" @submit.prevent="submitNewConnection">
+                        <label for="connname" class="block mt-4 text-sm">Name</label>
+                        <input id="connname" v-model="conn_name" type="text" placeholder="" class="bg-gray-50 outline-none focus:outline-none text-white text-sm block w-full p-2 bg-gray-700 placeholder-gray-400 text-white">
+                        <label for="connip" class="block mt-4 text-sm">IP Address</label>
+                        <input id="connip" v-model="conn_ip" type="text" placeholder="000.000.000.000" class="bg-gray-50 outline-none focus:outline-none text-white text-sm block w-full p-2 bg-gray-700 placeholder-gray-400 text-white">
+                        <label for="conndoor" class="block mt-4 text-sm">Door</label>
+                        <input id="conndoor" v-model="conn_ip" type="text" placeholder="5432" class="bg-gray-50 outline-none focus:outline-none text-white text-sm block w-full p-2 bg-gray-700 placeholder-gray-400 text-white">
+                        <label for="conndoor" class="block mt-4 text-sm">User</label>
+                        <input id="conndoor" v-model="conn_ip" type="text" placeholder="postgre" class="bg-gray-50 outline-none focus:outline-none text-white text-sm block w-full p-2 bg-gray-700 placeholder-gray-400 text-white">
+                        <label for="conndoor" class="block mt-4 text-sm">Password</label>
+                        <input id="conndoor" v-model="conn_ip" type="password" placeholder="******" class="bg-gray-50 outline-none focus:outline-none text-white text-sm block w-full p-2 bg-gray-700 placeholder-gray-400 text-white">
+                        <label for="conndoor" class="block mt-4 text-sm">Database Name</label>
+                        <input id="conndoor" v-model="conn_ip" type="text" placeholder="" class="bg-gray-50 outline-none focus:outline-none text-white text-sm block w-full p-2 bg-gray-700 placeholder-gray-400 text-white">
+                        <label for="conndoor" class="block mt-4 text-sm">Schema</label>
+                        <input id="conndoor" v-model="conn_ip" type="text" placeholder="public" class="bg-gray-50 outline-none focus:outline-none text-white text-sm block w-full p-2 bg-gray-700 placeholder-gray-400 text-white">
+                        <div class="py-4 w-full">
+                            <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                BUSCAR
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div v-if="page=='relationship-analyser'">
+                <div class="max-w-sm">
+                    <h2>Relationship Analyser</h2>
+                    <form class="max-w-sm" @submit.prevent="relationshipAnalyser">
+                        <label for="racoon" class="block mt-4 text-sm">Table</label>
+                        <select id="racoon" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:ring-4 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            <option selected>Connection</option>
+                            <option value="1">Connection 1</option>
+                        </select>
+                        <label for="ratable" class="block mt-4 text-sm">Table</label>
+                        <input id="ratable" v-model="ra_table" type="text" placeholder="" class="bg-gray-50 outline-none focus:outline-none text-white text-sm block w-full p-2 bg-gray-700 placeholder-gray-400 text-white">
+
+                        <label for="racolumns" class="block mt-4 text-sm">columns</label>
+                        <input id="racolumns" v-model="ra_columns" type="text" placeholder="" class="bg-gray-50 outline-none focus:outline-none text-white text-sm block w-full p-2 bg-gray-700 placeholder-gray-400 text-white">
+                        <div class="block mt-4">
+                            <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                RUN
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <h2 class="mt-4 text-sm">Result</h2>
+                <div>
+                    <pre class="bg-black text-gray-100 font-mono text-sm p-2 border border-gray-800 leading-relaxed overflow-auto whitespace-pre">{{raResponse}}</pre>
+                </div>
+            </div>
         </div>
         <script src="/assets/app.js"></script>
     </body>

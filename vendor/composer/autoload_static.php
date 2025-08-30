@@ -21,6 +21,12 @@ class ComposerStaticInit8e3064fecd4f7db85691f3e3b40e995a
     );
 
     public static $classMap = array (
+        'App\\Controllers\\RelationshipAnalyser' => __DIR__ . '/../..' . '/src/Controllers/RelationshipAnalyser.php',
+        'App\\Home' => __DIR__ . '/../..' . '/src/Home.php',
+        'App\\Model\\Environment\\Env' => __DIR__ . '/../..' . '/src/Model/Environment/Env.php',
+        'App\\Model\\Project' => __DIR__ . '/../..' . '/src/Model/Project.php',
+        'App\\Router' => __DIR__ . '/../..' . '/src/Router.php',
+        'App\\SearchColumn' => __DIR__ . '/../..' . '/src/SearchColumn.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
     );
 
