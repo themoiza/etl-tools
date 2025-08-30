@@ -1,8 +1,7 @@
 <?php
 
-$address = "http://localhost:8005";
+$address = "http://localhost:8543";
 
-// Abre o navegador
 if (PHP_OS_FAMILY === "Windows") {
     exec("start $address");
 } elseif (PHP_OS_FAMILY === "Darwin") {
@@ -11,6 +10,4 @@ if (PHP_OS_FAMILY === "Windows") {
     exec("xdg-open $address");
 }
 
-// Sobe o servidor embutido
-$cmd = "php -S localhost:8005 -t public";
-proc_open($cmd, [], $pipes);
+exec("php -S localhost:8543 -t public");

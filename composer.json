@@ -1,6 +1,6 @@
 {
     "name": "the.moiza/etl-tools",
-    "description": "ETL Tools",
+    "description": "ETL Tools - PostgreSQL Mission",
     "type": "project",
     "require": {
         "php": ">=8.0"
