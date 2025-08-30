@@ -1,0 +1,64 @@
+<!doctype html>
+    <html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>ETL Tools</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+        <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    </head>
+    <body class="bg-gray-900 text-white">
+
+        <div id="app" class="text-white">
+
+        <aside id="cta-button-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
+            <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+                <ul class="space-y-2 font-medium">
+                <li>
+                    <h1 class="ms-3">ETL TOOLS</h1>
+                </li>
+                <li>
+                    <button @click="openPage('home')" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group w-full">
+                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                        </svg>
+                        <span class="flex-1 ms-3 whitespace-nowrap">Home</span>
+                    </button>
+                </li>
+                <li>
+                    <button @click="openPage('search')" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group w-full">
+                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                        </svg>
+                        <span class="flex-1 ms-3 whitespace-nowrap">Encontrar Colunas</span>
+                    </button>
+                </li>
+                </ul>
+            </div>
+        </aside>
+
+        <div class="p-4 sm:ml-64">
+            <div v-if="page=='home'">{{ message }}</div>
+            <div v-if="page=='search'">
+            <h2>Procurar colunas</h2>
+            <form class="max-w-sm w-full" @submit.prevent="submitForm">
+                <label for="email-address-icon" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Colunas</label>
+                <div class="relative">
+                    <input v-model="columns" type="text" class="bg-gray-50 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="">
+                </div>
+                <label for="email-address-icon" class="block mb-2 mt-2 text-sm font-medium text-gray-900 dark:text-white">Schemas</label>
+                <div class="relative">
+                    <input v-model="schemas" type="text" class="bg-gray-50 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="">
+                </div>
+                <div class="py-4 w-full">
+                    <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        BUSCAR
+                    </button>
+                </div>
+            </form>
+            </div>
+        </div>
+        </div>
+        <script src="/assets/app.js"></script>
+    </body>
+</html>
