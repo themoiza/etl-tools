@@ -1,17 +1,17 @@
 const { createApp, ref } = Vue
 
-import Terminal from "./components/Terminal.js";
+import Relationshipanalyser from "./tools/RelationshipAnalyser.js";
 
 const app = createApp({
+    components: {
+        Relationshipanalyser
+    },
     data() {
         return {
-            page: 'relationship-analyser',
+            page: 'ra',
             columns: '',
             schemas: '',
-            raResponse: '',
-            ra_schema: '',
-            ra_table: '',
-            ra_columns: ''
+            raResponse: ''
         }
     },
     methods: {
@@ -36,47 +36,6 @@ const app = createApp({
             .catch(err => {
                 this.response = 'Erro ao enviar: ' + err;
             });
-        },
-        relationshipAnalyser(){
-
-            const formData = new FormData();
-            formData.append('ra_schema', this.ra_schema);
-            formData.append('ra_table', this.ra_table);
-            formData.append('ra_columns', this.ra_columns);
-
-            this.raResponse = '';
-
-            fetch('/relationship-analyser', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder('utf-8');
-
-                const readChunk = () => {
-                    reader.read().then(({ done, value }) => {
-
-                        if (done) {
-                            return;
-                        }
-
-                        const chunk = decoder.decode(value, { stream: true });
-                        this.raResponse = chunk.split('<br/>').join('\n');
-
-                        readChunk();
-                    });
-                };
-
-                readChunk();
-            })
-            .catch(err => {
-                this.raResponse = 'Erro: ' + err;
-            });
         }
     }
-})
-
-app.component("Terminal", Terminal)
-
-app.mount("#app")
+}).mount("#app")

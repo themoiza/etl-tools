@@ -32,7 +32,7 @@
                             </button>
                         </li>
                         <li>
-                            <button @click="openPage('relationship-analyser')" class="p-2 text-left text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group w-full">
+                            <button @click="openPage('ra')" class="p-2 text-left text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group w-full">
                                 <span class="flex-1 ms-3">Relationship Analyser</span>
                             </button>
                         </li>
@@ -86,35 +86,8 @@
                         </form>
                     </div>
                 </div>
-                <div v-if="page=='relationship-analyser'">
-                    <div class="flex gap-4 items-top w-full">
-                        <div class="flex-none w-1/4">
-                            <h2>Relationship Analyser</h2>
-                            <form class="max-w-sm" @submit.prevent="relationshipAnalyser">
-                                <label for="racoon" class="block mt-4 text-sm">Table</label>
-                                <select id="racoon" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:ring-4 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                                    <option selected>Connection</option>
-                                    <option value="1">Connection 1</option>
-                                </select>
-                                <label for="raschema" class="block mt-4 text-sm">Schema</label>
-                                <input id="raschema" v-model="ra_schema" type="text" placeholder="public" class="bg-gray-50 outline-none focus:outline-none text-white text-sm block w-full p-2 bg-gray-700 placeholder-gray-400 text-white">
-
-                                <label for="ratable" class="block mt-4 text-sm">Table</label>
-                                <input id="ratable" v-model="ra_table" type="text" placeholder="table" class="bg-gray-50 outline-none focus:outline-none text-white text-sm block w-full p-2 bg-gray-700 placeholder-gray-400 text-white">
-
-                                <label for="racolumns" class="block mt-4 text-sm">columns</label>
-                                <input id="racolumns" v-model="ra_columns" type="text" placeholder="id" class="bg-gray-50 outline-none focus:outline-none text-white text-sm block w-full p-2 bg-gray-700 placeholder-gray-400 text-white">
-                                <div class="block mt-4">
-                                    <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                                        RUN
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                        <div class="flex-1">
-                            <Terminal :output="raResponse"></Terminal>
-                        </div>
-                    </div>
+                <div v-if="page=='ra'">
+                    <relationshipanalyser></relationshipanalyser>
                 </div>
             </div>
         </div>
