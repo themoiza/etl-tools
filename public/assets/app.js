@@ -1,16 +1,18 @@
 const { createApp, ref } = Vue
 
-createApp({
+import Terminal from "./components/Terminal.js";
+
+const app = createApp({
     data() {
         return {
             page: 'relationship-analyser',
             columns: '',
             schemas: '',
-            raResponse: ''
+            raResponse: '',
+            ra_schema: '',
+            ra_table: '',
+            ra_columns: ''
         }
-    },
-    mounted() {
-
     },
     methods: {
         openPage(newPage) {
@@ -38,21 +40,43 @@ createApp({
         relationshipAnalyser(){
 
             const formData = new FormData();
-            formData.append('ra_table', this.columns);
-            formData.append('ra_columns', this.schemas);
+            formData.append('ra_schema', this.ra_schema);
+            formData.append('ra_table', this.ra_table);
+            formData.append('ra_columns', this.ra_columns);
+
+            this.raResponse = '';
 
             fetch('/relationship-analyser', {
                 method: 'POST',
                 body: formData
             })
-            .then(res => res.json())
-            .then(data => {
-                this.raResponse = data.result;
+            .then(response => {
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder('utf-8');
+
+                const readChunk = () => {
+                    reader.read().then(({ done, value }) => {
+
+                        if (done) {
+                            return;
+                        }
+
+                        const chunk = decoder.decode(value, { stream: true });
+                        this.raResponse = chunk.split('<br/>').join('\n');
+
+                        readChunk();
+                    });
+                };
+
+                readChunk();
             })
             .catch(err => {
-                this.raResponse = 'Error: ' + err;
+                this.raResponse = 'Erro: ' + err;
             });
-
         }
     }
-}).mount('#app')
+})
+
+app.component("Terminal", Terminal)
+
+app.mount("#app")

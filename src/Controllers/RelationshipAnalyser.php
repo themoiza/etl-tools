@@ -4,6 +4,8 @@ namespace App\Controllers;
 
 use App\Model\Project;
 
+use App\Model\Tools\RelationshipAnalyser\Analyser;
+
 class RelationshipAnalyser{
 
     private $_conn;
@@ -13,19 +15,13 @@ class RelationshipAnalyser{
         $project = new Project;
         $this->_conn = $project->getConnection();
 
-        header('Content-Type: application/json; charset=utf-8');
+        $ra_schema = $_POST['ra_schema'];
+        $ra_table = $_POST['ra_table'];
+        $ra_columns = $_POST['ra_columns'];
 
-        try {
+        $ra_columns = explode(',', $ra_columns);
 
-            $query = $this->_conn->prepare('select * from delta_protocolo.vw_ruas limit 1');
-            $query->execute();
-            $fetch = $query->fetch(\PDO::FETCH_ASSOC);
-
-            echo json_encode(['result' => [$fetch]]);
-
-        } catch (\PDOException $e) {
-
-            echo json_encode(['result' => $e->getMessage()]);
-        }
+        $analyser = new Analyser;
+        $analyser->run($this->_conn, $ra_schema, $ra_table, $ra_columns);
     }
 }
