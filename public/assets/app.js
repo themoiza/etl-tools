@@ -1,41 +1,50 @@
 const { createApp, ref } = Vue
 
 import Relationshipanalyser from "./tools/RelationshipAnalyser.js";
+import Searchcolumns from "./tools/SearchColumns.js";
+import Sql from "./tools/Sql.js";
+import Uploadzip from "./tools/UploadZip.js";
 
 const app = createApp({
     components: {
-        Relationshipanalyser
+        Relationshipanalyser,
+        Searchcolumns,
+        Sql,
+        Uploadzip
     },
     data() {
         return {
             page: 'ra',
-            columns: '',
-            schemas: '',
-            raResponse: ''
+            tabs: [],
+            activeTab: null,
+            nextId: 1,
         }
     },
     methods: {
         openPage(newPage) {
             this.page = newPage
         },
-        submitForm() {
-
-            const formData = new FormData();
-            formData.append('columns', this.columns);
-            formData.append('schemas', this.schemas);
-
-            fetch('/search-columns', {
-                method: 'POST',
-                body: formData
-            })
-            .then(res => res.json())
-            .then(data => {
-                this.columns = '';
-                this.schemas = '';
-            })
-            .catch(err => {
-                this.response = 'Erro ao enviar: ' + err;
-            });
+        openTab(type) {
+            const id = this.nextId++;
+            const newTab = {
+                id,
+                title: `${type} #${id}`,
+                component: type,
+                props: { instanceId: id }, // você pode passar props únicas
+            };
+            this.tabs.push(newTab);
+            this.activeTab = id;
+        },
+        closeTab(id) {
+            const index = this.tabs.findIndex((t) => t.id === id);
+            if (index !== -1) {
+                this.tabs.splice(index, 1);
+                if (this.activeTab === id && this.tabs.length > 0) {
+                this.activeTab = this.tabs[Math.max(0, index - 1)].id;
+                } else if (this.tabs.length === 0) {
+                this.activeTab = null;
+                }
+            }
         }
     }
 }).mount("#app")

@@ -11,6 +11,7 @@ class Router{
     private $_roads = [
         'search-columns' => \App\SearchColumn::class,
         'relationship-analyser' => \App\Controllers\RelationshipAnalyser::class,
+        'upload-zip' => \App\Controllers\UploadZipController::class,
     ];
 
     public function __construct(){

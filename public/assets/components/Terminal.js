@@ -3,6 +3,9 @@ export default {
     data() {
         return {
             term: '·',
+            lines: [],
+            buffer: [],
+            flushTimer: null
         }
     },
     props: {
@@ -13,12 +16,33 @@ export default {
     },
     methods: {
         clearTerminal(){
-            this.term = '';
+            this.lines = []
+        }
+    },
+    computed:{
+        line(){
+            return this.lines.join('\n');
         }
     },
     watch: {
-        output(newVal){
-            this.term = newVal;
+        output(chunk){
+
+            const newLines = chunk.split('<n>');
+
+            newLines.forEach(line => {
+                if (line.includes('<r>')) {
+
+                    const replaced = line.replace('<r>', '');
+
+                    if (this.lines.length > 0) {
+                        this.lines[this.lines.length - 1] = replaced;
+                    } else {
+                        this.lines.push(replaced);
+                    }
+                } else {
+                    this.lines.push(line);
+                }
+            });
 
             this.$nextTick(() => {
                 const el = this.$refs.logOutput;
@@ -30,7 +54,7 @@ export default {
     },
     template: `
         <div class="block w-full bg-zinc-900 rounded-sm shadow-xs">
-            <div class="flex items-center w-full py-1 px-2">
+            <div class="flex items-center w-full py-1 px-2 bg-black opacity-70">
                 <div class="flex-1 text-xs">TERMINAL</div>
                 <div class="flex-none">
                     <button @click="clearTerminal" title="Clear" type="button" class="p-2 cursor-pointer border border-zinc-800 rounded-sm">
@@ -40,11 +64,11 @@ export default {
                     </button>
                 </div>
             </div>
-            <pre
+            <div
                 ref="logOutput"
                 style="scrollbar-width: thin; scrollbar-color: #18181b #000000; max-height: calc(100vh - 120px)"
-                class="bg-black text-gray-100 rounded-b-sm font-mono text-xs p-2 leading-relaxed h-full overflow-auto whitespace-pre"
-            >{{ term }}</pre>
+                class="bg-black text-gray-100 rounded-b-sm font-mono text-xs p-2 leading-relaxed h-full overflow-auto overflow-x-scroll whitespace-pre-wrap break-words"
+            >{{ line }}</div>
         </div>
     `
 }

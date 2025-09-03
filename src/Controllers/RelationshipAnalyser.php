@@ -12,6 +12,26 @@ class RelationshipAnalyser{
 
     public function index(){
 
+        $i = 0;
+
+        /*do {
+
+            $i++;
+
+            if($i % 10 == 0){
+
+                echo microtime().'<n>';
+
+            }else{
+
+                echo microtime().'<r>';
+            }
+            ob_flush();
+            usleep(100000);
+
+        } while($i < 50);
+        exit;*/
+
         $project = new Project;
         $this->_conn = $project->getConnection();
 

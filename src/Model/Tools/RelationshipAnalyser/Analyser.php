@@ -4,26 +4,11 @@ namespace App\Model\Tools\RelationshipAnalyser;
 
 class Analyser{
 
-    public $timeLogs = 0;
-
-    public $timeLogsSeconds = 2;
-
     public function sendChunk($log, $end = false){
 
-        echo $log.'<br/>';
-
-        if($this->timeLogs + $this->timeLogsSeconds < time()){
-
-            ob_flush();
-            flush();
-
-            $this->timeLogs = time();
-        }
-
-        if($end){
-            ob_flush();
-            flush();
-        }
+        echo $log;
+        ob_flush();
+        usleep(5000);
     }
 
     public function run($conn, $schema, $table, $cols){
@@ -48,7 +33,7 @@ class Analyser{
         and c.column_name in ($cols)
         ORDER BY c.table_schema DESC, c.table_name");
 
-        $this->sendChunk($table.PHP_EOL);
+        $this->sendChunk($table.'<n>');
 
         $base->execute(['schema' => $schema]);
         $tabelasBases = $base->fetchAll(\PDO::FETCH_ASSOC);
@@ -107,7 +92,7 @@ class Analyser{
 
                         $b = ['table_name' => key($tabelaB), 'column_name' => $colB['col'], 'data_type' => $colB['data_type']];
 
-                        $this->sendChunk(implode('.', $a).' vs '.implode('.', $b)."\r");
+                        $this->sendChunk(implode('.', $a).' vs '.implode('.', $b)."<r>");
 
                         if($a['data_type'] == $b['data_type'] and ($a['table_name'].$a['column_name']) != ($b['table_name'].$b['column_name'])){
 
@@ -169,10 +154,10 @@ select
                 // Exibir resultado
                 if (!empty($relations)) {
 
-                    $this->sendChunk("Relações encontradas:");
+                    $this->sendChunk('Relações encontradas:<n>');
                     foreach ($relations as $rel) {
 
-                        $this->sendChunk("{$rel['table1']}.{$rel['col1']} {$rel['direction']} {$rel['table2']}.{$rel['col2']}");
+                        $this->sendChunk("{$rel['table1']}.{$rel['col1']} {$rel['direction']} {$rel['table2']}.{$rel['col2']}<n>");
 
                         $uIndex = '';
                         $fKey = '';
@@ -193,7 +178,7 @@ select
                             $query = $conn->prepare($uIndex);
                             $query->execute();
 
-                            $this->sendChunk("CREATE UNIQUE INDEX \"{$rel['table2']}_{$rel['col2']}_idx");
+                            $this->sendChunk("CREATE UNIQUE INDEX \"{$rel['table2']}_{$rel['col2']}_idx<n>");
 
                         } catch (\PDOException $e) {
 
@@ -255,10 +240,10 @@ select
         // Exibir resultado
         if (!empty($relations)) {
 
-            $this->sendChunk("Relações encontradas:");
+            $this->sendChunk("Relações encontradas:<n>");
             foreach ($relations as $rel) {
 
-                $this->sendChunk("{$rel['table1']}.{$rel['col1']} {$rel['direction']} {$rel['table2']}.{$rel['col2']}");
+                $this->sendChunk("{$rel['table1']}.{$rel['col1']} {$rel['direction']} {$rel['table2']}.{$rel['col2']}<n>");
 
                 $uIndex = '';
                 $fKey = '';
@@ -279,7 +264,7 @@ select
                     $query = $conn->prepare($uIndex);
                     $query->execute();
 
-                    $this->sendChunk("CREATE UNIQUE INDEX \"{$rel['table2']}_{$rel['col2']}_idx");
+                    $this->sendChunk("CREATE UNIQUE INDEX \"{$rel['table2']}_{$rel['col2']}_idx<n>");
 
                 } catch (\PDOException $e) {
                     $this->sendChunk($e->getMessage());
@@ -290,7 +275,7 @@ select
                     $query = $conn->prepare($fKey);
                     $query->execute();
 
-                    $this->sendChunk("FOREIGN KEY ({$rel['col2']})");
+                    $this->sendChunk("FOREIGN KEY ({$rel['col2']})<n>");
 
                 } catch (\PDOException $e) {
                     $this->sendChunk($e->getMessage());
@@ -301,14 +286,14 @@ select
         // Exibir resultado
         if (!empty($relations)) {
 
-            $this->sendChunk("Relações encontradas:", true);
+            $this->sendChunk("Relações encontradas:<n>", true);
             foreach ($relations as $rel) {
 
-                $this->sendChunk("{$rel['table1']}.{$rel['col1']} {$rel['direction']} {$rel['table2']}.{$rel['col2']}");
+                $this->sendChunk("{$rel['table1']}.{$rel['col1']} {$rel['direction']} {$rel['table2']}.{$rel['col2']}<n>");
 
             }
         } else {
-            $this->sendChunk("Nenhuma relação encontrada.", true);
+            $this->sendChunk("Nenhuma relação encontrada.<n>", true);
         }
     }
 }
