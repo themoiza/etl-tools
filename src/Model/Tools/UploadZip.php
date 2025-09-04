@@ -33,8 +33,6 @@ class UploadZip{
             exit;
         }
 
-        sleep(5);
-
         try {
 
             $this->sendChunk('Reading uploaded files: '.$zipPath.'<n>');

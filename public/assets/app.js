@@ -4,13 +4,15 @@ import Relationshipanalyser from "./tools/RelationshipAnalyser.js";
 import Searchcolumns from "./tools/SearchColumns.js";
 import Sql from "./tools/Sql.js";
 import Uploadzip from "./tools/UploadZip.js";
+import Viewbytea from "./tools/ViewBytea.js";
 
 const app = createApp({
     components: {
         Relationshipanalyser,
         Searchcolumns,
         Sql,
-        Uploadzip
+        Uploadzip,
+        Viewbytea
     },
     data() {
         return {
@@ -48,3 +50,11 @@ const app = createApp({
         }
     }
 }).mount("#app")
+/*
+const socket = new WebSocket("ws://localhost:9501");
+
+socket.onopen = () => console.log("Conectado ao WebSocket");
+
+socket.onmessage = (event) => {
+    console.log(event.data);
+};*/

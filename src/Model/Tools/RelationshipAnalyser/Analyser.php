@@ -2,9 +2,43 @@
 
 namespace App\Model\Tools\RelationshipAnalyser;
 
-class Analyser{
+use \Redis;
 
-    public function sendChunk($log, $end = false){
+class Analyser
+{
+    private $redis;
+
+    public function __construct()
+    {
+        $this->connect();
+    }
+
+    private function connect()
+    {
+        $this->redis = new \Redis();
+
+        // conexão persistente (não fecha entre requests)
+        $this->redis->pconnect('127.0.0.1', 6379, 1.5);
+
+        // opcional: se quiser ver quando a conexão cair
+        $this->redis->setOption(Redis::OPT_READ_TIMEOUT, -1);
+    }
+
+    public function sendChunk($log, $end = false)
+    {
+        /*try {
+
+            if (!$this->redis->isConnected()) {
+                $this->connect();
+            }
+
+            $this->redis->publish('logs', $log);
+
+        } catch (\RedisException $e) {*/
+
+            $this->connect();
+            $this->redis->publish('logs', $log);
+        /*}*/
 
         echo $log;
         ob_flush();
