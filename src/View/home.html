@@ -12,7 +12,7 @@
         <div id="app" class="text-white bg-black/15 backdrop-blur-lg h-full min-h-screen">
 
             <aside id="cta-button-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
-                <div class="h-full px-3 py-4 overflow-y-auto bg-black">
+                <div class="h-full px-3 py-4 overflow-y-auto bg-black/10">
                     <ul class="space-y-2 font-medium">
                         <li>
                             <button class="p-2 text-sm text-left text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group w-full">
@@ -83,6 +83,9 @@
                                 <span class="flex-1 ms-3">View Bytea</span>
                             </button>
                         </li>
+                        <li>
+                            <hr class="border-zinc-900" />
+                        </li>
                     </ul>
                 </div>
             </aside>
@@ -94,18 +97,21 @@
                             v-for="(tab, index) in tabs"
                             :key="tab.id"
                             class="p-2 cursor-pointer flex items-center text-xs mt-2 rounded-t-sm"
-                            :class="{
-                            'bg-zinc-900': activeTab === tab.id
-                            }"
+                            :class="{'bg-zinc-900': activeTab === tab.id}"
                             @click="activeTab = tab.id"
                         >
                             {{ tab.title }}
-                            <button
-                            class="ml-2 text-white"
-                            @click.stop="closeTab(tab.id)"
-                            >
-                            ✕
-                            </button>
+                            <button class="ml-2 text-white" @click="askCloseTab(tab.id)">✕</button>
+
+                            <!-- Componente de Dialog -->
+                            <confirmdialog
+                                :visible="showDialog"
+                                :tab-id="selectedTabId"
+                                title="Fechar aba"
+                                message="Deseja realmente fechar esta aba?"
+                                @confirm="closeTab"
+                                @cancel="showDialog = false"
+                            ></confirmdialog>
                         </div>
                     </div>
 
@@ -121,35 +127,6 @@
                     <div class="flex-1 p-4"  v-show="tabs.length == 0">
                         <div class="text-[80px] text-zinc-200 text-center select-none font-mono">ETL TOOLS</div>
                         <div class="text-[20px] text-zinc-200 text-center select-none font-mono">PostgreSQL Mission</div>
-                    </div>
-                </div>
-
-
-                <div v-if="page=='home'"></div>
-                <div v-if="page=='new-connection'">
-                    <h2 class="text-lg">New connection</h2>
-                    <div class="py-4">
-                        <form class="max-w-sm" @submit.prevent="submitNewConnection">
-                            <label for="connname" class="block mt-4 text-sm">Name</label>
-                            <input id="connname" v-model="conn_name" type="text" placeholder="" class="bg-gray-50 outline-none focus:outline-none text-white text-sm block w-full p-2 bg-gray-700 placeholder-gray-400 text-white">
-                            <label for="connip" class="block mt-4 text-sm">IP Address</label>
-                            <input id="connip" v-model="conn_ip" type="text" placeholder="000.000.000.000" class="bg-gray-50 outline-none focus:outline-none text-white text-sm block w-full p-2 bg-gray-700 placeholder-gray-400 text-white">
-                            <label for="conndoor" class="block mt-4 text-sm">Door</label>
-                            <input id="conndoor" v-model="conn_ip" type="text" placeholder="5432" class="bg-gray-50 outline-none focus:outline-none text-white text-sm block w-full p-2 bg-gray-700 placeholder-gray-400 text-white">
-                            <label for="conndoor" class="block mt-4 text-sm">User</label>
-                            <input id="conndoor" v-model="conn_ip" type="text" placeholder="postgre" class="bg-gray-50 outline-none focus:outline-none text-white text-sm block w-full p-2 bg-gray-700 placeholder-gray-400 text-white">
-                            <label for="conndoor" class="block mt-4 text-sm">Password</label>
-                            <input id="conndoor" v-model="conn_ip" type="password" placeholder="******" class="bg-gray-50 outline-none focus:outline-none text-white text-sm block w-full p-2 bg-gray-700 placeholder-gray-400 text-white">
-                            <label for="conndoor" class="block mt-4 text-sm">Database Name</label>
-                            <input id="conndoor" v-model="conn_ip" type="text" placeholder="" class="bg-gray-50 outline-none focus:outline-none text-white text-sm block w-full p-2 bg-gray-700 placeholder-gray-400 text-white">
-                            <label for="conndoor" class="block mt-4 text-sm">Schema</label>
-                            <input id="conndoor" v-model="conn_ip" type="text" placeholder="public" class="bg-gray-50 outline-none focus:outline-none text-white text-sm block w-full p-2 bg-gray-700 placeholder-gray-400 text-white">
-                            <div class="py-4 w-full">
-                                <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                                    BUSCAR
-                                </button>
-                            </div>
-                        </form>
                     </div>
                 </div>
             </div>

@@ -1,25 +1,28 @@
 const { createApp, ref } = Vue
 
 import Relationshipanalyser from "./tools/RelationshipAnalyser.js";
+import Confirmdialog from "./components/ConfirmDialog.js";
 import Searchcolumns from "./tools/SearchColumns.js";
-import Sql from "./tools/Sql.js";
 import Uploadzip from "./tools/UploadZip.js";
 import Viewbytea from "./tools/ViewBytea.js";
+import Sql from "./tools/Sql.js";
 
 const app = createApp({
     components: {
         Relationshipanalyser,
+        Confirmdialog,
         Searchcolumns,
-        Sql,
         Uploadzip,
-        Viewbytea
+        Viewbytea,
+        Sql
     },
     data() {
         return {
-            page: 'ra',
             tabs: [],
             activeTab: null,
             nextId: 1,
+            showDialog: false,
+            selectedTabId: null
         }
     },
     methods: {
@@ -30,14 +33,22 @@ const app = createApp({
             const id = this.nextId++;
             const newTab = {
                 id,
-                title: `${type} #${id}`,
+                title: (`${type}`).toUpperCase(),
                 component: type,
-                props: { instanceId: id }, // você pode passar props únicas
+                props: { instanceId: id },
             };
             this.tabs.push(newTab);
             this.activeTab = id;
         },
+        askCloseTab(tabId) {
+
+            console.log(tabId)
+            this.selectedTabId = tabId
+            this.showDialog = true
+        },
         closeTab(id) {
+
+            this.showDialog = false
             const index = this.tabs.findIndex((t) => t.id === id);
             if (index !== -1) {
                 this.tabs.splice(index, 1);
@@ -50,11 +61,3 @@ const app = createApp({
         }
     }
 }).mount("#app")
-/*
-const socket = new WebSocket("ws://localhost:9501");
-
-socket.onopen = () => console.log("Conectado ao WebSocket");
-
-socket.onmessage = (event) => {
-    console.log(event.data);
-};*/
