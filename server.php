@@ -1,6 +1,6 @@
 <?php
 
-$address = "http://localhost:8544";
+$address = "http://localhost:8543";
 
 if (PHP_OS_FAMILY === "Windows") {
     exec("start $address");
@@ -10,4 +10,4 @@ if (PHP_OS_FAMILY === "Windows") {
     exec("xdg-open $address");
 }
 
-exec("php -S localhost:8544 -t public");
+exec("php -S localhost:8543 -t public");

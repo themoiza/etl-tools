@@ -55,7 +55,7 @@ export default {
         }
     },
     template: `
-        <div>
+        <div class="p-4">
             <div class="flex gap-4 items-top w-full">
                 <div class="flex-none w-1/4">
                     <form class="max-w-sm" @submit.prevent="raFetch">

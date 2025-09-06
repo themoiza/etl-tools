@@ -45,6 +45,22 @@ class Analyser
         usleep(5000);
     }
 
+    public function progressBarText($text, $progress) {
+
+        $width = 100;
+        $percent = intval($progress * 100);
+
+        $barWidth = $width - strlen($text) - 8;
+        if ($barWidth < 10) $barWidth = 10;
+
+        $done = intval($barWidth * $progress);
+        $todo = $barWidth - $done;
+
+        $bar = str_repeat("=", $done) . str_repeat("-", $todo);
+
+        return sprintf("[%s%s%3d%%]", $text, $bar, $percent);
+    }
+
     public function run($conn, $schema, $table, $cols){
 
         $cols = '\''.implode('\',\'', $cols).'\'';
@@ -67,9 +83,8 @@ class Analyser
         and c.column_name in ($cols)
         ORDER BY c.table_schema DESC, c.table_name");
 
-        $this->sendChunk($table.'<n>');
-
-        $base->execute(['schema' => $schema]);
+        $base->bindParam(':schema', $schema);
+        $base->execute();
         $tabelasBases = $base->fetchAll(\PDO::FETCH_ASSOC);
 
         $stmt = $conn->prepare("SELECT c.table_name, c.column_name, c.data_type
@@ -90,6 +105,7 @@ class Analyser
 
         $stmt->execute(['schema' => $schema]);
         $tabelas = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $totalColumns = count($tabelas);
 
         $tabelasBasesCols = [];
         $i = 0;
@@ -114,6 +130,8 @@ class Analyser
         // Montar pares de colunas diferentes
         $relations = [];
         $sql = [];
+
+        $barIncrement = 0;
         foreach ($tabelasBasesCols as $tabela) {
 
             foreach($tabela[key($tabela)] as $col){
@@ -123,10 +141,13 @@ class Analyser
                 foreach ($tabelasCols as $tabelaB) {
             
                     foreach($tabelaB[key($tabelaB)] as $colB){
+                        
+                        $barIncrement++;
 
                         $b = ['table_name' => key($tabelaB), 'column_name' => $colB['col'], 'data_type' => $colB['data_type']];
 
-                        $this->sendChunk(implode('.', $a).' vs '.implode('.', $b)."<r>");
+                        $textBar = implode('.', $a).' vs '.implode('.', $b);
+                        $this->sendChunk($this->progressBarText($textBar, $barIncrement/$totalColumns).'<r>');
 
                         if($a['data_type'] == $b['data_type'] and ($a['table_name'].$a['column_name']) != ($b['table_name'].$b['column_name'])){
 

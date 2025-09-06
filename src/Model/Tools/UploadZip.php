@@ -13,6 +13,22 @@ class UploadZip{
         usleep(5000);
     }
 
+    public function progressBarText($text, $progress) {
+
+        $width = 80;
+        $percent = intval($progress * 100);
+
+        $barWidth = $width - strlen($text) - 8;
+        if ($barWidth < 10) $barWidth = 10;
+
+        $done = intval($barWidth * $progress);
+        $todo = $barWidth - $done;
+
+        $bar = str_repeat("=", $done) . str_repeat("-", $todo);
+
+        return sprintf("[%s%s%3d%%]", $text, $bar, $percent);
+    }
+
     public function load($conn){
 
         $this->sendChunk('Process started at '.date('Y-m-d H:i:s').'<n>');
@@ -72,7 +88,9 @@ class UploadZip{
                 // Check if already converted
                 if(in_array($chave.$sha1, $existentes)){
 
-                    // Skip already processed files
+                    if($i % 100 == 0){
+                        $this->sendChunk($this->progressBarText('Reading converted files', ($i + 1)/$zip->numFiles).'<r>');
+                    }
                     continue;
                 }
 
@@ -88,7 +106,8 @@ class UploadZip{
 
                 $base64 = base64_encode($zip->getFromIndex($i));
 
-                $this->sendChunk('Reading: '.str_repeat('0',  6 - strlen($i)).$i.' '.$fileInZip['name'].'<r>');
+                $text = 'Reading: '.str_repeat('0',  6 - strlen($i)).$i.' '.$fileInZip['name'];
+                $this->sendChunk($this->progressBarText($text, ($i + 1)/$zip->numFiles).'<r>');
 
                 $query = $conn->prepare('INSERT INTO arquivos.binarios (
                     chave, mime, "data", arquivo, sha1

@@ -83,7 +83,8 @@ export default {
                 'PRIMARY','KEY','FOREIGN','REFERENCES','UNIQUE','CHECK','DEFAULT','NULL','NOT',
                 'AND','OR','IN','IS','BETWEEN','LIKE','ILIKE','EXISTS','DISTINCT','AS',
                 'CASE','WHEN','THEN','ELSE','END',
-                'WITH','RECURSIVE','UNION','ALL','EXCEPT','INTERSECT'
+                'WITH','RECURSIVE','UNION','ALL','EXCEPT','INTERSECT',
+                'DECLARE','RECORD','BEGIN', 'FUNCTION', 'RETURNS'
             ];
             const kwRegex = new RegExp(`\\b(?:${keywords.join('|')})\\b`, 'gi');
 

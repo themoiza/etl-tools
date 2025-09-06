@@ -1,8 +1,6 @@
 export default {
     name: 'SqlEditor',
-    components: {
-
-    },
+    components: {},
     data() {
         return {
             query: ''
@@ -17,6 +15,23 @@ export default {
                 pre.scrollLeft = textarea.scrollLeft;
             }
         }
+    },
+    watch: {
+        query(newVal) {
+            // Emite para o pai toda vez que muda
+            this.$emit('update:sql', newVal);
+            console.log('aqui1');
+        },
+        sql(newVal) {
+            // Atualiza o query caso o pai altere o valor
+            if (newVal !== this.query) {
+                this.query = newVal;
+                console.log('aqui2');
+            }
+        }
+    },
+    props: {
+        sql: String
     },
     computed: {
         highlighted() {
@@ -107,9 +122,9 @@ export default {
             <div 
                 class="z-1 absolute top-[0px] right-[0px] left-[0px]" style="width: inherit; height: inherit;">
                 <textarea 
-                    spellcheck="false" 
                     v-model="query"
-                    @scroll="syncScroll" 
+                    @scroll="syncScroll"
+                    spellcheck="false"
                     class="outline-none border-none focus:border-none focus:outline-none active:border-none text-transparent caret-white text-xs font-mono resize-none overflow-auto whitespace-pre break-keep"
                     style="max-height: calc(100vh - 67px); width: inherit; height: inherit; scrollbar-width: thin; scrollbar-color: #18181b #000000;"
                 ></textarea>
