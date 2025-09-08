@@ -6,7 +6,7 @@ use App\Home;
 use App\SearchColumn;
 use App\Controllers\RelationshipAnalyser;
 
-class Router{
+class Router {
 
     private $_roads = [
         'search-columns' => \App\SearchColumn::class,
@@ -14,22 +14,36 @@ class Router{
         'upload-zip' => \App\Controllers\UploadZipController::class,
     ];
 
-    public function __construct(){
+    public function __construct() {
 
         $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         $path = trim($path, '/');
 
-        if(isset($this->_roads[$path])){
+        $parts = explode('/', $path);
 
-            $className = $this->_roads[$path];
+        $controllerKey = $parts[0] ?? '';
+        $method = $parts[1] ?? 'index';
+        $params = array_slice($parts, 2);
 
-            $s = new $className;
-            $s->index();
+        if (isset($this->_roads[$controllerKey])) {
+            $className = $this->_roads[$controllerKey];
+            $controller = new $className;
 
-        }else{
+            if (method_exists($controller, $method)) {
+                call_user_func_array([$controller, $method], $params);
+            } else {
 
-            $s = new Home();
-            $s->init();
+                if (method_exists($controller, 'index')) {
+                    call_user_func_array([$controller, 'index'], $params);
+                } else {
+                    http_response_code(404);
+                    echo "Método não encontrado";
+                }
+            }
+
+        } else {
+            $home = new Home();
+            $home->init();
         }
     }
 }

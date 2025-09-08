@@ -21,10 +21,9 @@ export default {
     template: `
         <div>
             <div v-if="visible" class="fixed inset-0 flex items-center justify-center z-50">
-                <!-- backdrop -->
+
                 <div class="absolute inset-0 bg-black opacity-50" @click="onCancel"></div>
 
-                <!-- caixa do dialog -->
                 <div class="relative bg-white dark:bg-zinc-800 rounded-lg shadow-lg w-[320px] p-4 z-10">
                 <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-2">
                     {{ title }}
@@ -40,11 +39,11 @@ export default {
                     >
                     Cancelar
                     </button>
-                    <button 
-                    class="px-3 py-1 rounded bg-blue-600 text-white hover:bg-blue-700"
-                    @click="onConfirm"
-                    >
-                    Confirmar
+                    <button focus
+                        class="px-3 py-1 rounded bg-blue-600 text-white hover:bg-blue-700"
+                        @click="onConfirm"
+                        >
+                        Confirmar
                     </button>
                 </div>
                 </div>

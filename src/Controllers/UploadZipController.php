@@ -12,6 +12,8 @@ class UploadZipController{
 
     public function index(){
 
+        ignore_user_abort(false);
+
         $project = new Project;
         $this->_conn = $project->getConnection();
 

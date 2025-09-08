@@ -12,7 +12,7 @@ class RelationshipAnalyser{
 
     public function index(){
 
-        $i = 0;
+        ignore_user_abort(false);
 
         $project = new Project;
         $this->_conn = $project->getConnection();
