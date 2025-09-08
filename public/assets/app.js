@@ -5,6 +5,7 @@ import Confirmdialog from "./components/ConfirmDialog.js";
 import Searchcolumns from "./tools/SearchColumns.js";
 import Uploadzip from "./tools/UploadZip.js";
 import Viewbytea from "./tools/ViewBytea.js";
+import Player from "./tools/Player.js";
 import Sql from "./tools/Sql.js";
 
 const app = createApp({
@@ -14,6 +15,7 @@ const app = createApp({
         Searchcolumns,
         Uploadzip,
         Viewbytea,
+        Player,
         Sql
     },
     data() {

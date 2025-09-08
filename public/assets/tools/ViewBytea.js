@@ -7,7 +7,8 @@ export default {
     },
     data() {
         return {
-            sql: ''
+            sql: '',
+            fileUrl: ''
         }
     },
     watch: {
@@ -21,22 +22,18 @@ export default {
             const formData = new FormData();
             formData.append('sql', this.sql);
 
-            console.log(this.sql);
-
-            /*fetch('/search-columns', {
+            fetch('/view-bytea', {
                 method: 'POST',
                 body: formData
             })
-            .then(res => res.json(
-                this.output = JSON.stringify(res)
-            ))
-            .then(data => {
-                this.columns = '';
-                this.schemas = '';
+            .then(response => response.json())
+            .then(response => {
+
+                this.fileUrl = 'http://localhost:8543/'+response.fileName;
             })
             .catch(err => {
-                this.response = 'Erro ao enviar: ' + err;
-            });*/
+
+            });
         }
     },
     computed: {},
@@ -76,7 +73,7 @@ export default {
                     </form>
                 </div>
                 <div class="flex-1">
-                    <iframe class="w-full" style="height: calc(100vh - 120px)" src="./assets/pdf.pdf"></iframe>
+                    <iframe class="w-full" style="height: calc(100vh - 120px)" :src="fileUrl"></iframe>
                 </div>
             </div>
         </div>

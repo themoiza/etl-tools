@@ -56,6 +56,10 @@ class Analyser
         $done = intval($barWidth * $progress);
         $todo = $barWidth - $done;
 
+        if($todo < 1){
+            $todo = 1;
+        }
+
         $bar = str_repeat("=", $done) . str_repeat("-", $todo);
 
         return sprintf("[%s%s%3d%%]", $text, $bar, $percent);

@@ -20,13 +20,11 @@ export default {
         query(newVal) {
             // Emite para o pai toda vez que muda
             this.$emit('update:sql', newVal);
-            console.log('aqui1');
         },
         sql(newVal) {
             // Atualiza o query caso o pai altere o valor
             if (newVal !== this.query) {
                 this.query = newVal;
-                console.log('aqui2');
             }
         }
     },

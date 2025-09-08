@@ -15,9 +15,12 @@ class ViewByteaController{
         $project = new Project;
         $this->_conn = $project->getConnection();
 
-        $query = $_POST['query'];
+        $sql = $_POST['sql'];
 
         $upload = new ViewBytea;
-        $upload->load($this->_conn, $query);
+        $file = $upload->load($this->_conn, $sql);
+
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode($file);
     }
 }

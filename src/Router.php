@@ -12,6 +12,7 @@ class Router {
         'search-columns' => \App\SearchColumn::class,
         'relationship-analyser' => \App\Controllers\RelationshipAnalyser::class,
         'upload-zip' => \App\Controllers\UploadZipController::class,
+        'view-bytea' => \App\Controllers\ViewByteaController::class,
     ];
 
     public function __construct() {
