@@ -8,6 +8,7 @@ export default {
     },
     data() {
         return {
+            port: 8543,
             controller: null,
             output: '·',
             isSubmitting: false,
@@ -18,24 +19,51 @@ export default {
         }
     },
     methods: {
-        raFetch(){
-
-            this.controller = new AbortController();
-            const signal = this.controller.signal;
+        getPort(){
 
             const formData = new FormData();
-            formData.append('ra_schema', this.ra_schema);
-            formData.append('ra_table', this.ra_table);
-            formData.append('ra_columns', this.ra_columns);
+            formData.append('sql', this.sql);
+
+            return fetch('/service/get-free-port', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(response => {
+
+                this.port = response.ports[0]
+                return this.port;
+            })
+            .catch(err => {
+
+            });
+        },
+        raFetch(){
 
             this.output = '';
             this.percentage = 0;
             this.isSubmitting = true;
 
-            fetch('/relationship-analyser', {
-                method: 'POST',
-                body: formData,
-                signal
+            this.getPort()
+            .then(port => {
+                console.log(port);
+                if (!port) {
+                    throw new Error('Nenhuma porta disponível');
+                }
+
+                this.controller = new AbortController();
+                const signal = this.controller.signal;
+
+                const formData = new FormData();
+                formData.append('ra_schema', this.ra_schema);
+                formData.append('ra_table', this.ra_table);
+                formData.append('ra_columns', this.ra_columns);
+
+                return fetch('http://localhost:'+this.port+'/relationship-analyser', {
+                    method: 'POST',
+                    body: formData,
+                    signal
+                });
             })
             .then(response => {
 
