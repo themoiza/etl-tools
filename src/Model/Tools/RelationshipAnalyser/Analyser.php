@@ -10,7 +10,7 @@ class Analyser
 
     public function __construct()
     {
-        $this->connect();
+        //$this->connect();
     }
 
     private function connect()
@@ -36,13 +36,13 @@ class Analyser
 
         } catch (\RedisException $e) {*/
 
-            $this->connect();
-            $this->redis->publish('logs', $log);
+            //$this->connect();
+            //$this->redis->publish('logs', $log);
         /*}*/
 
         echo $log;
         ob_flush();
-        usleep(5000);
+        usleep(10000);
     }
 
     public function progressBarText($text, $progress) {
@@ -65,9 +65,9 @@ class Analyser
         return sprintf("[%s%s%3d%%]", $text, $bar, $percent);
     }
 
-    public function run($conn, $schema, $table, $cols){
+    public function run($conn, $schema, $table, $cls){
 
-        $cols = '\''.implode('\',\'', $cols).'\'';
+        $cols = '\''.implode('\',\'', $cls).'\'';
 
         $base = $conn->prepare("SELECT c.table_name, c.column_name, c.data_type
         FROM information_schema.columns c
@@ -109,7 +109,8 @@ class Analyser
 
         $stmt->execute(['schema' => $schema]);
         $tabelas = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        $totalColumns = count($tabelas);
+
+        $totalColumns = count($tabelas) * count($cls);
 
         $tabelasBasesCols = [];
         $i = 0;
@@ -133,7 +134,7 @@ class Analyser
 
         // Montar pares de colunas diferentes
         $relations = [];
-        $sql = [];
+        $sql = '';
 
         $barIncrement = 0;
         foreach ($tabelasBasesCols as $tabela) {
@@ -155,7 +156,7 @@ class Analyser
 
                         if($a['data_type'] == $b['data_type'] and ($a['table_name'].$a['column_name']) != ($b['table_name'].$b['column_name'])){
 
-                            $sql[] = "
+                            $sql = "
 select
     '{$a['table_name']}' AS table1,
     '{$a['column_name']}' AS col1,
@@ -168,141 +169,59 @@ select
                             
                         }
 
-                        if(count($sql) >= 1){
+                        try {
 
-                            try {
+                            $query = $conn->prepare($sql);
+                            $query->execute();
 
-                                $query = $conn->prepare(implode(' UNION ', $sql));
-                                $query->execute();
+                        } catch (\PDOException $e) {
+                            $this->sendChunk($e->getMessage());
+                        }
 
-                            } catch (\PDOException $e) {
-                                $this->sendChunk($e->getMessage());
-                            }
+                        $results = $query->fetchAll(\PDO::FETCH_ASSOC);
 
-                            $results = $query->fetchAll(\PDO::FETCH_ASSOC);
+                        foreach ($results as $result) {
+                            if ($result['matches'] > 0 && $result['mismatches'] == 0 && ($result['table1'].$result['col1']) != ($result['table2'].$result['col2'])) {
 
-                            foreach ($results as $result) {
-                                if ($result['matches'] > 0 && $result['mismatches'] == 0 && ($result['table1'].$result['col1']) != ($result['table2'].$result['col2'])) {
+                                if($result['unique_a'] !== $result['unique_b']){
 
-                                    if($result['unique_a'] !== $result['unique_b']){
-
-                                        $direction = '=>';
-                                        if($result['unique_a'] === true and $result['unique_b'] === false){
-                                            $direction = '<=';
-                                        }
-
-                                        $relations[] = [
-                                            'table1'    => $result['table1'],
-                                            'col1'      => $result['col1'],
-                                            'table2'    => $result['table2'],
-                                            'col2'      => $result['col2'],
-                                            'unique_a'  => $result['unique_a'],
-                                            'unique_b'  => $result['unique_b'],
-                                            'direction' => $direction,
-                                            'matches'   => $result['matches']
-                                        ];
+                                    $direction = '=>';
+                                    if($result['unique_a'] === true and $result['unique_b'] === false){
+                                        $direction = '<=';
                                     }
+
+                                    $this->sendChunk("Relação encontrada: {$result['table1']}.{$result['col1']} $direction {$result['table2']}.{$result['col2']}<n>");
+
+                                    $relations[] = [
+                                        'table1'    => $result['table1'],
+                                        'col1'      => $result['col1'],
+                                        'table2'    => $result['table2'],
+                                        'col2'      => $result['col2'],
+                                        'unique_a'  => $result['unique_a'],
+                                        'unique_b'  => $result['unique_b'],
+                                        'direction' => $direction,
+                                        'matches'   => $result['matches']
+                                    ];
                                 }
                             }
-
-                            $sql = [];
                         }
                     }
                 }
-
-                // Exibir resultado
-                if (!empty($relations)) {
-
-                    $this->sendChunk('Relações encontradas:<n>');
-                    foreach ($relations as $rel) {
-
-                        $this->sendChunk("{$rel['table1']}.{$rel['col1']} {$rel['direction']} {$rel['table2']}.{$rel['col2']}<n>");
-
-                        $uIndex = '';
-                        $fKey = '';
-
-                        if($rel['direction'] == '=>'){
-
-                            $uIndex = "CREATE UNIQUE INDEX \"{$rel['table2']}_{$rel['col2']}_idx\" ON {$schema}.\"{$rel['table2']}\" ({$rel['col2']})";
-                            $fKey = "ALTER TABLE {$schema}.\"{$rel['table1']}\" ADD CONSTRAINT \"{$rel['table1']}_{$rel['table2']}_fk\" FOREIGN KEY ({$rel['col1']}) REFERENCES {$schema}.\"{$rel['table2']}\"({$rel['col2']})";
-                        }
-                        if($rel['direction'] == '<='){
-
-                            $uIndex = "CREATE UNIQUE INDEX \"{$rel['table1']}_{$rel['col1']}_idx\" ON {$schema}.\"{$rel['table1']}\" ({$rel['col1']})";
-                            $fKey = "ALTER TABLE {$schema}.\"{$rel['table2']}\" ADD CONSTRAINT \"{$rel['table2']}_{$rel['table1']}_fk\" FOREIGN KEY ({$rel['col2']}) REFERENCES {$schema}.\"{$rel['table1']}\"({$rel['col1']})";
-                        }
-
-                        try {
-
-                            $query = $conn->prepare($uIndex);
-                            $query->execute();
-
-                            $this->sendChunk("CREATE UNIQUE INDEX \"{$rel['table2']}_{$rel['col2']}_idx<n>");
-
-                        } catch (\PDOException $e) {
-
-                            $this->sendChunk($e->getMessage());
-                        }
-
-                        try {
-
-                            $query = $conn->prepare($fKey);
-                            $query->execute();
-
-                            $this->sendChunk("FOREIGN KEY ({$rel['col2']})");
-
-                        } catch (\PDOException $e) {
-
-                            $this->sendChunk($e->getMessage());
-                        }
-                    }
-
-                    $relations = [];
-                }
-            }
-
-            if(count($sql) > 0){
-
-                $query = $conn->prepare(implode(' UNION ', $sql));
-                $query->execute();
-                $results = $query->fetchAll(\PDO::FETCH_ASSOC);
-
-                foreach ($results as $result) {
-
-                    if ($result['matches'] > 0 && $result['mismatches'] == 0 && ($result['table1'].$result['col1']) != ($result['table2'].$result['col2'])) {
-
-                        if($result['unique_a'] !== $result['unique_b']){
-
-                            $direction = '=>';
-                            if($result['unique_a'] === true and $result['unique_b'] === false){
-                                $direction = '<=';
-                            }
-
-                            $relations[] = [
-                                'table1'    => $result['table1'],
-                                'col1'      => $result['col1'],
-                                'table2'    => $result['table2'],
-                                'col2'      => $result['col2'],
-                                'unique_a'  => $result['unique_a'],
-                                'unique_b'  => $result['unique_b'],
-                                'direction' => $direction,
-                                'matches'   => $result['matches']
-                            ];
-                        }
-                    }
-                }
-
-                $sql = [];
             }
         }
 
         // Exibir resultado
-        if (!empty($relations)) {
+        if (count($relations) > 0) {
 
-            $this->sendChunk("Relações encontradas:<n>");
+            if(count($relations) == 1){
+                $this->sendChunk(count($relations).' relação foi encontrada');
+            }else{
+                $this->sendChunk(count($relations).' relações foram encontradas');
+            }
+
             foreach ($relations as $rel) {
 
-                $this->sendChunk("{$rel['table1']}.{$rel['col1']} {$rel['direction']} {$rel['table2']}.{$rel['col2']}<n>");
+                $this->sendChunk("{$rel['table1']}.{$rel['col1']} {$rel['direction']} {$rel['table2']}.{$rel['col2']}");
 
                 $uIndex = '';
                 $fKey = '';
@@ -318,41 +237,33 @@ select
                     $fKey = "ALTER TABLE {$schema}.\"{$rel['table2']}\" ADD CONSTRAINT \"{$rel['table2']}_{$rel['table1']}_fk\" FOREIGN KEY ({$rel['col2']}) REFERENCES {$schema}.\"{$rel['table1']}\"({$rel['col1']})";
                 }
 
+                $this->sendChunk('    ⚙️ Tentando criar índice único...');
+                $this->sendChunk('        ⏳ '.$uIndex);
+
                 try {
 
                     $query = $conn->prepare($uIndex);
                     $query->execute();
-
-                    $this->sendChunk("CREATE UNIQUE INDEX \"{$rel['table2']}_{$rel['col2']}_idx<n>");
+                    $this->sendChunk('        ☑️ Criado com sucesso');
 
                 } catch (\PDOException $e) {
-                    $this->sendChunk($e->getMessage());
+                    $this->sendChunk(str_replace("\n", '<n>', '        ⚠️ '.$e->getMessage()));
                 }
 
+                $this->sendChunk('    ⚙️ Tentando criar chave estrangeira...');
+                $this->sendChunk('        ⏳ '.$fKey);
                 try {
 
                     $query = $conn->prepare($fKey);
                     $query->execute();
-
-                    $this->sendChunk("FOREIGN KEY ({$rel['col2']})<n>");
+                    $this->sendChunk('        ☑️ Criada com sucesso');
 
                 } catch (\PDOException $e) {
-                    $this->sendChunk($e->getMessage());
+                    $this->sendChunk(str_replace("\n", '<n>', '        ⚠️ '.$e->getMessage()));
                 }
             }
-        }
-
-        // Exibir resultado
-        if (!empty($relations)) {
-
-            $this->sendChunk("Relações encontradas:<n>", true);
-            foreach ($relations as $rel) {
-
-                $this->sendChunk("{$rel['table1']}.{$rel['col1']} {$rel['direction']} {$rel['table2']}.{$rel['col2']}<n>");
-
-            }
-        } else {
-            $this->sendChunk("Nenhuma relação encontrada.<n>", true);
+        }else{
+            $this->sendChunk('Nenhuma relação foi encontrada');
         }
     }
 }

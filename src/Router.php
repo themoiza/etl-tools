@@ -13,6 +13,7 @@ class Router {
         'relationship-analyser' => \App\Controllers\RelationshipAnalyser::class,
         'upload-zip' => \App\Controllers\UploadZipController::class,
         'view-bytea' => \App\Controllers\ViewByteaController::class,
+        'service' => \App\Controllers\ServiceController::class,
     ];
 
     public function __construct() {
@@ -27,8 +28,13 @@ class Router {
         $params = array_slice($parts, 2);
 
         if (isset($this->_roads[$controllerKey])) {
+
             $className = $this->_roads[$controllerKey];
             $controller = new $className;
+
+            if ($method) {
+                $method = lcfirst(str_replace(' ', '', ucwords(str_replace('-', ' ', $method))));
+            }
 
             if (method_exists($controller, $method)) {
                 call_user_func_array([$controller, $method], $params);

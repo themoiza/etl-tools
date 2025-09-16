@@ -6,5 +6,19 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'App\\Controllers\\RelationshipAnalyser' => $baseDir . '/src/Controllers/RelationshipAnalyser.php',
+    'App\\Controllers\\UploadZipController' => $baseDir . '/src/Controllers/UploadZipController.php',
+    'App\\Controllers\\ViewByteaController' => $baseDir . '/src/Controllers/ViewByteaController.php',
+    'App\\Home' => $baseDir . '/src/Home.php',
+    'App\\Model\\Environment\\Env' => $baseDir . '/src/Model/Environment/Env.php',
+    'App\\Model\\Postgres\\Schemas' => $baseDir . '/src/Model/Postgres/Schemas.php',
+    'App\\Model\\Postgres\\Search' => $baseDir . '/src/Model/Postgres/Search.php',
+    'App\\Model\\Project' => $baseDir . '/src/Model/Project.php',
+    'App\\Model\\RaPgsqlException' => $baseDir . '/src/Model/RaPgsqlException.php',
+    'App\\Model\\Tools\\RelationshipAnalyser\\Analyser' => $baseDir . '/src/Model/Tools/RelationshipAnalyser/Analyser.php',
+    'App\\Model\\Tools\\UploadZip' => $baseDir . '/src/Model/Tools/UploadZip.php',
+    'App\\Model\\Tools\\ViewBytea' => $baseDir . '/src/Model/Tools/ViewBytea.php',
+    'App\\Router' => $baseDir . '/src/Router.php',
+    'App\\SearchColumn' => $baseDir . '/src/SearchColumn.php',
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
 );

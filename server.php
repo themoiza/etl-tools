@@ -1,7 +1,7 @@
 <?php
 
 $port = $argv[1] ?? 8543;
-$openBrowser = $argv[2] ?? false; // segundo argumento opcional
+$openBrowser = $argv[2] ?? false;
 $address = "http://localhost:$port";
 
 if ($openBrowser) {

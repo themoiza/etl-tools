@@ -6,26 +6,25 @@ pids=()
 
 first=true
 for port in "${ports[@]}"; do
-    echo "Iniciando servidor na porta $port..."
+    echo "Starting server on port $port..."
     if $first; then
-        php "$server_script" "$port" true &  # só o primeiro abre navegador
+        php "$server_script" "$port" true &
         first=false
     else
-        php "$server_script" "$port" &       # os outros sem navegador
+        php "$server_script" "$port" &
     fi
     pids+=($!)
 done
 
 cleanup() {
-	echo
-	echo "Encerrando..."
+	echo "Shutting down..."
 	kill "${pids[@]}" 2>/dev/null
 	exit 0
 }
 
 trap cleanup SIGINT
 
-echo "Todos os servidores foram iniciados!"
-echo "Pressione CTRL+C para encerrar."
+echo "All servers have been started!"
+echo "Press CTRL+C to stop."
 
 wait "${pids[@]}"

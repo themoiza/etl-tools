@@ -113,18 +113,18 @@ export default {
         <div class="relative" style="width: inherit; height: inherit;">
             <pre 
                 ref="highlighted" 
-                class="z-0 outline-none focus:outline-none text-white text-xs font-mono resize-none overflow-auto whitespace-pre break-keep" 
-                style="max-height: calc(100vh - 67px); width: inherit; height: inherit; scrollbar-width: thin; scrollbar-color: #18181b #000000;"
+                class="z-0 w-full p-[10px] outline-none focus:outline-none text-white text-xs font-mono resize-none overflow-auto whitespace-pre break-keep" 
+                style="max-height: calc(100vh - 67px); height: inherit; scrollbar-width: thin; scrollbar-color: #18181b #080808;"
                 v-html="highlighted"
             ></pre>
             <div 
-                class="z-1 absolute top-[0px] right-[0px] left-[0px]" style="width: inherit; height: inherit;">
+                class="z-1 absolute inset-[0px]" style="width: inherit; height: inherit;">
                 <textarea 
                     v-model="query"
                     @scroll="syncScroll"
                     spellcheck="false"
-                    class="outline-none border-none focus:border-none focus:outline-none active:border-none text-transparent caret-white text-xs font-mono resize-none overflow-auto whitespace-pre break-keep"
-                    style="max-height: calc(100vh - 67px); width: inherit; height: inherit; scrollbar-width: thin; scrollbar-color: #18181b #000000;"
+                    class="w-full p-[10px] outline-none border-none focus:border-none focus:outline-none active:border-none text-transparent caret-white text-xs font-mono resize-none overflow-auto whitespace-pre break-keep"
+                    style="max-height: calc(100vh - 67px); height: inherit; scrollbar-width: thin; scrollbar-color: #18181b #080808;"
                 ></textarea>
             </div>
         </div>

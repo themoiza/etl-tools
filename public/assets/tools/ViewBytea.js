@@ -39,12 +39,11 @@ export default {
     computed: {},
     template: `
         <div class="block p-4">
-            <h2>View Bytea</h2>
-            <div class="flex w-full">
+            <div class="flex w-full gap-2">
                 <div class="flex-none w-[380px]">
                     <form @submit.prevent="getBytea">
-                        <div class="block w-[320px] h-[280px] bg-black p-2">
-                            <sqleditor :sql="sql" @update:sql="sql = $event"></sqleditor>
+                        <div class="block overflow-hidden w-[380px] h-[350px] bg-black/10 rounded-sm">
+                            <sqleditor style="width: inherit;" :sql="sql" @update:sql="sql = $event"></sqleditor>
                         </div>
                         <div class="pt-2">
                             <button 
@@ -73,7 +72,11 @@ export default {
                     </form>
                 </div>
                 <div class="flex-1">
-                    <iframe class="w-full" style="height: calc(100vh - 120px)" :src="fileUrl"></iframe>
+                    <iframe 
+                        class="w-full"
+                        style="height: calc(100vh - 120px);"
+                        :src="fileUrl"
+                        ></iframe>
                 </div>
             </div>
         </div>
